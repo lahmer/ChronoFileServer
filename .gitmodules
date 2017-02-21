@@ -1,0 +1,3 @@
+[submodule "blackhole"]
+	path = blackhole
+	url = https://github.com/3Hren/blackhole.git
