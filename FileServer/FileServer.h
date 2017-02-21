@@ -16,6 +16,7 @@
 class FileServer {
 public:
     FileServer(const std::string& directory);
+    std::shared_ptr<File> getFile(const std::string& file);
 private:
     void loadDirectory();
 

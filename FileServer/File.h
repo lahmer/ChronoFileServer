@@ -17,27 +17,33 @@ public:
     struct FileChunk{
         unsigned int segmentNumber;
         std::shared_ptr<File> file;
-        unsigned char* buff;
+        std::string buff;
         FileChunk(){
-            buff = NULL;
+            buff = "";
         }
     };
 
 
     File(const boost::filesystem::path& p, unsigned int segmentSize);
     std::string getFileURL();
-    void loadSegments();
+    std::shared_ptr<FileChunk> getChunk(unsigned int index );
+    unsigned int getChunkListSize();
 private:
-    void log(const std::string&  );
+    void loadSegments();
+    void log(const std::string&);
 private:
     bool areLoaded;
     unsigned int fileSize;
+public:
+    unsigned int getFileSize() const;
+
+private:
     unsigned int segmentSize;
 
 
     boost::filesystem::path path;
     unsigned int lastSegment;
-    std::map<int,File::FileChunk> chunks;
+    std::vector<std::shared_ptr<File::FileChunk>> chunks;
     std::ifstream file;
 };
 

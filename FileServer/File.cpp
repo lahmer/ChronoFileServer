@@ -23,17 +23,18 @@ void File::loadSegments() {
     std::string content(str.str());
     int index = 0;
     while(index < content.size()){
-        File::FileChunk chunk;
-        chunk.segmentNumber = this->lastSegment++;
+        std::shared_ptr<File::FileChunk> chunk;
+        chunk.reset(new FileChunk());
+        chunk->segmentNumber = this->lastSegment++;
 
-        chunk.buff = new unsigned char[this->segmentSize];
         for(int i = 0 ; i < this->segmentSize && index< content.size();i++,index++){
-            chunk.buff[i] = (unsigned char) content.c_str()[index];
-            std::cout<<i<<std::endl;
+            chunk->buff.push_back(content.c_str()[i]);
         }
-        std::cout<<"Here"<<std::endl;
-        this->chunks[lastSegment++] = chunk;
+        this->chunks.push_back(chunk);
+        //std::cout<<chunks[lastSegment-1]->buff<<std::endl;
     }
+
+    areLoaded = true;
 }
 
 File::File(const boost::filesystem::path &p, unsigned int segmentSize) {
@@ -50,4 +51,26 @@ File::File(const boost::filesystem::path &p, unsigned int segmentSize) {
     lastSegment = 0;
     areLoaded = false;
     this->segmentSize = segmentSize;
+}
+
+unsigned int File::getFileSize() const {
+    return fileSize;
+}
+
+std::shared_ptr<File::FileChunk> File::getChunk(unsigned int index) {
+    if(index< 0)
+        return nullptr;
+    if(index >= lastSegment)
+        return nullptr;
+    if(!areLoaded)
+        loadSegments();
+    areLoaded = true;
+    return this->chunks.at(index);
+}
+
+unsigned int File::getChunkListSize() {
+    if(! areLoaded)
+        loadSegments();
+    areLoaded = true;
+    return (unsigned int) this->chunks.size();
 }

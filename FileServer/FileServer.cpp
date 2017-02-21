@@ -41,3 +41,7 @@ void FileServer::loadDirectory() {
     }
     return;
 }
+
+std::shared_ptr<File> FileServer::getFile(const std::string &file) {
+    return this->fileList[file];
+}
